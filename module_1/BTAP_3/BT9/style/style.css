@@ -1,0 +1,136 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: Arial, sans-serif;
+    background-color: #fff8dc;
+    padding: 20px;
+}
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #ffecb3;
+}
+.logo {
+    padding: 10px;
+    background-color: #c5e1a5;
+    border: 1px solid #000;
+}
+ul{
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+li{
+    padding: 20px;
+}
+.menu li{
+    padding: 10px 20px;
+    background-color: #ffcccb;
+    border: 1px solid #000;
+    cursor: pointer;
+}
+.menu  li:hover{
+    background-color: #ff8a80;
+}
+.second-menu ,.second-menu ,.third ,.fourth{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.name{
+    margin-left: 5px;
+}
+.login {
+    padding: 10px 20px;
+    background-color: #c8e6c9;
+    border: 1px solid #000;
+}
+.img{
+    width: 40px;
+    height: 40px;
+    background-color: #dcedc8;
+    border-radius: 50%;
+    margin: 0 10px 0 60px;
+    border: 1px solid green;
+}
+.circle {
+    width: 40px;
+    height: 40px;
+    background-color: #dcedc8;
+    border-radius: 50%;
+    border: 1px solid green;
+}
+.menu-item{
+    margin: 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container{
+    margin-top: 30px;
+    width: 100%;
+    height: 800px;
+}
+header{
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffcccb;
+    border: 1px solid #ccc;
+}
+.main{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    margin-top: 10px;
+    gap :10px
+
+}
+.sidebar{
+    width: 20%;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ff8a80;
+}
+
+.content{
+    width: 80%;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #dcedc8;
+}
+
+.second{
+    margin-top: 90px;
+}
+
+.sidebar_second{
+    width: 20%;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ff8a80;
+}
+.content_second{
+    width:calc(100% - 40%);
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #dcedc8;
+}
