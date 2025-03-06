@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Display && Layout</title>
+    <link rel="stylesheet" href="style/style.css" />
+  </head>
+  <body>
+    <!-- display: inline item sẽ nằm trên cùng một dòng Nếu các items vượt quá độ dài của dòng thì item sẽ xuống dòng mới không thể set width và height ,margin, padding đầy đủ 4 hướng (top, bottom, right, left).-->
+    <!-- display: block luôn được xuống dòng và chiếm toàn bộ width nếu width không được set.sẽ set được width, height, margin, padding đầy đủ 4 hướng (top, bottom, right, left).-->
+    <!-- display: inline-block  item sẽ nằm trên cùng một dòng Nếu các items vượt quá độ dài của dòng thì item sẽ xuống dòng mới ,có set width, height, margin, padding đủ 4 hướng. -->
+    <!-- 
+        FLEX :
+        - container: là thành phần lớn bao quanh các phần tử bên trong, các item bên trong sẽ hiển thị dựa trên thiết lập của container này. 
+        - item: là phần tử con của container, bạn có thể thiết lập nó sẽ sử dụng bao nhiêu cột trong một container, hoặc thiết lập thứ tự hiển thị của nó.
+
+        - main axis: đây là trục chính để điều khiển hướng mà các item sẽ hiển thị. Lưu ý, main axis không phải lúc nào cũng nằm ngang như sơ đồ trên, bạn có thể sử dụng thuộc tính flex-direction để thay đổi hướng của trục và lúc đó các item sẽ hiển thị theo nó. 
+        - main-start | main-end: khi thiết lập flexbox, các ítem nằm trong container hiển thị từ điểm bắt đầu gọi là main-start tời điểm kết thúc gọi là main-end. 
+        main size: kich thước (chiều rộng hoặc chiều cao) của các item, tùy thuộc vào hưởng của main axis. 
+        cross axis: cross axis luôn là trục vuông góc của main axis. Hướng của nó phụ thuộc vào hướng 
+        của main axis. 
+        - cross-start | cross-end: có ý nghĩa tương tự nhưng luôn vuông góc với main start, main end. 
+        cross size: kich thước (chiều rộng hoặc chiều cao) của các item dựa trên trục cross axis, tùy thuộc vào hưởng của main axis.
+
+        Thuộc tính flex-direction xác định hướng của main-axis để container sắp xếp các item. 
+            Các tham số: 
+            row: mặc định, flex item được sắp xếp theo chiều ngang, từ trái qua phải (main axis nằm ngang). 
+            row-reverse: flex item được sắp xếp theo chiều ngang, từ phải qua trái (main axis nằm ngang). 
+            column: flex item được sắp xếp theo chiều dọc, từ trên xuống dưới (main axis đứng dọc). 
+            column-reverse: flex item được sắp xếp theo chiều dọc, từ dưới lên trên (main axis đứng dọc).
+
+        -Theo mặc định, item sẽ tự động thay đổi kích thước phần tử để nó luôn hiển thị trên cùng một dòng dù bạn có resize trinh duyệt theo kích thước nào, điều này dễ làm cho nội dung bên trong (nếu có) bị giãn hay ép nhỏ lại, có thể gây xấu giao diện. - Thuộc tỉnh flex-wrap cho phép item tự động xuống dòng khi kích thước container thay đổi. 
+            - Các tham số:  
+            nowrap: mặc định, tất cả các item sẽ nằm trên một dòng. 
+            wrap: khi kích thước container thay đổi và tổng chiều rộng các item cộng lại lớn hơn chiều rộng của container thì item 
+            sẽ tự động xuống dòng. 
+            wrap-reverse: tương tự như wrap, nhưng thay vì xuống dòng thì item sẽ tự động nhảy lên trên. 
+     -->
+
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link rel="stylesheet" href="style/style.css" />
+      </head>
+      <body>
+        <div class="container">
+            <header>
+                <h4>AUG 16, 2016 </h4>
+                <div class="login">
+                    <a href="">SignUp</a>
+                    <a href="">Login</a>
+                </div>
+            </header>
+            <div class="banner">
+                <select>
+                    <option value="">SUBSCRIBE</option>
+                </select>
+                <h1>AWESOME LOGO</h1>
+                <div class=""></div>
+            </div>
+          <!-- <div class="base">
+            <div class="first">1</div>
+            <div class="first">2</div>
+            <div class="first">3</div>
+          </div>
+          <div class="base">
+            <div class="second">4</div>
+            <div class="second">5</div>
+          </div> -->
+          <div class="content">
+            <div class="base">
+              <div class="first">1</div>
+              <div class="first">2</div>
+              <div class="first">3</div>
+              <div class="first">4</div>
+              <div class="first">5</div>
+            </div>
+          </div>
+          <footer>
+            <div class="end"></div>
+          </footer>
+        </div>
+      </body>
+    </html>
+  </body>
+</html>
