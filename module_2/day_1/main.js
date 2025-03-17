@@ -47,3 +47,28 @@ if (year <= 0) {
             console.log("Tháng không hợp lệ");
     }
 }
+// bieu thuc logic dung se thuc thi sai thi thoat
+// kiểm tra trước rồi thực thi
+let i = 0;
+while (i<10){
+    console.log("số",i+1);
+    i++;
+}
+// Làm rồi mới kiểm tra 
+let a =0
+do{
+     console.log("số ",a+1)
+     a++;
+}
+while(a<10)
+
+// let b = prompt("Nhap gia tri a")
+// do{
+//     b = prompt("moi nhap lai")
+// }
+// while(b<=0)
+
+
+for(let e =0 ;e<10;e+=2){
+    console.log(e+1)
+}
