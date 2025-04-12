@@ -83,26 +83,36 @@
 // })
 
 // Async await
-function renderData(item){
+let listData = null;
+
+function renderData(item) {
     return `
     <div class="weather-card border p-4">
-            <p >${item.dt_txt}</p>
-            <h1 >${item.main.temp}°C</h1>
-            <img src="https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png"/>
-            <p>${item.weather[0].description}</p>
+            <p >${
+        item.dt_txt
+    }</p>
+            <h1 >${
+        item.main.temp
+    }°C</h1>
+            <img src="https://openweathermap.org/img/wn/${
+        item.weather[0].icon
+    }@2x.png"/>
+            <p>${
+        item.weather[0].description
+    }</p>
     </div>
     `
 }
-let listData = null;
+
 async function fetchData(city = "Hanoi") {
     try {
         const res = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=09a71427c59d38d6a34f89b47d75975c&units=metric`);
         const data = await res.json();
-        listData = data.list; 
+        listData = data.list;
         const container = document.querySelector(".container");
         container.innerHTML = "";
         listData.map(item => {
-            container.innerHTML += renderData(item); 
+            container.innerHTML += renderData(item);
         });
     } catch (error) {
         console.log(error);
@@ -110,11 +120,15 @@ async function fetchData(city = "Hanoi") {
 };
 fetchData()
 const searchInput = document.querySelector(".search input")
-searchInput.addEventListener('keyup',function(e){
-    if(e.key === "Enter"){
-        const city = searchInput.value.trim();
-        if(city){
-            fetchData(city)
-        }
+searchInput.addEventListener('change', function (e) {
+    // if(e.key === "Enter"){
+    //     const city = searchInput.value.trim();
+    //     if(city){
+    //         fetchData(city)
+    //     }
+    // }
+    const city = e.target.value.trim();
+    if (city) {
+        fetchData(city)
     }
 })
