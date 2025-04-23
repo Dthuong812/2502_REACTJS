@@ -48,6 +48,7 @@ function addStudent(event) {
     document.getElementById('english-error').innerText = '';
     document.getElementById('literature-error').innerText = '';
 
+  
     const name = document.getElementById('name').value.trim();
     const gender = document.querySelector('input[name="gender"]:checked')?.value;
     const mathScore = parseFloat(document.getElementById('math').value);
@@ -61,30 +62,22 @@ function addStudent(event) {
         document.getElementById('name-error').innerText = 'Vui lòng nhập tên!';
         isValid = false;
     }
-
-
     if (!gender) {
         document.getElementById('gender-error').innerText = 'Vui lòng chọn giới tính!';
         isValid = false;
     }
-
     if (isNaN(mathScore) || mathScore < 0 || mathScore > 10) {
         document.getElementById('math-error').innerText = 'Điểm Toán không hợp lệ! Vui lòng nhập số từ 0 đến 10.';
         isValid = false;
     }
-
-
     if (isNaN(englishScore) || englishScore < 0 || englishScore > 10) {
         document.getElementById('english-error').innerText = 'Điểm Tiếng Anh không hợp lệ! Vui lòng nhập số từ 0 đến 10.';
         isValid = false;
     }
-
-
     if (isNaN(literatureScore) || literatureScore < 0 || literatureScore > 10) {
         document.getElementById('literature-error').innerText = 'Điểm Văn không hợp lệ! Vui lòng nhập số từ 0 đến 10.';
         isValid = false;
     }
-
 
     if (!isValid) {
         return;
@@ -94,7 +87,7 @@ function addStudent(event) {
     const editIndex = document.getElementById('student-form').dataset.editIndex;
 
     if (editIndex !== undefined) {
-   
+        // Cập nhật sinh viên
         students[editIndex] = {
             id: parseInt(editIndex) + 1,
             name,
@@ -107,7 +100,7 @@ function addStudent(event) {
         document.getElementById('add-student').textContent = 'Create Student';
         delete document.getElementById('student-form').dataset.editIndex;
     } else {
-      
+
         const newStudent = {
             id: students.length + 1,
             name,
@@ -117,13 +110,13 @@ function addStudent(event) {
             literatureScore,
             averageScore: ((mathScore + englishScore + literatureScore) / 3).toFixed(2),
         };
-        students.push(newStudent);
+        students.unshift(newStudent); 
     }
 
     saveStudentsToLocalStorage(students);
     renderListWithPagination(students);
 
- 
+
     document.getElementById('student-form').reset();
 }
 
@@ -177,7 +170,7 @@ function renderListWithPagination(students) {
     const endIndex = startIndex + itemsPerPage;
     const paginatedStudents = students.slice(startIndex, endIndex);
 
-    listStudent.innerHTML = "";
+    listStudent.innerHTML = '';
 
     paginatedStudents.forEach((student, index) => {
         const averageScore = average(student);
@@ -191,8 +184,8 @@ function renderListWithPagination(students) {
             <td>${student.literatureScore}</td>
             <td>${averageScore}</td>
             <td>
-                <button class="btn btn-sm btn-success me-1" onclick="editStudent(${startIndex + index})">Update</button>
-                <button class="btn btn-sm btn-danger" onclick="deleteStudent(${startIndex + index})">Delete</button>
+                <button class="btn btn-sm btn-warning me-1" style="background-color: green; color: white; border: none;" onclick="editStudent(${startIndex + index})">Update</button>
+                <button class="btn btn-sm btn-danger" style="background-color: red; color: white; border: none;" onclick="deleteStudent(${startIndex + index})">Delete</button>
             </td>
         `;
         listStudent.appendChild(row);
@@ -206,15 +199,15 @@ function renderPaginationControls(totalItems) {
     const pagination = document.querySelector('.pagination');
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-    pagination.innerHTML = "";
+    pagination.innerHTML = '';
 
-
+    // Nút Previous
     const prevButton = document.createElement('li');
     prevButton.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
     prevButton.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Previous</a>`;
     pagination.appendChild(prevButton);
 
-
+    // Các nút số trang
     for (let i = 1; i <= totalPages; i++) {
         const pageItem = document.createElement('li');
         pageItem.className = `page-item ${i === currentPage ? 'active' : ''}`;
@@ -222,24 +215,18 @@ function renderPaginationControls(totalItems) {
         pagination.appendChild(pageItem);
     }
 
-
+    // Nút Next
     const nextButton = document.createElement('li');
     nextButton.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
     nextButton.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Next</a>`;
     pagination.appendChild(nextButton);
 }
 
-
 function changePage(page) {
-    const students = getStudentsFromLocalStorage();
-    const totalPages = Math.ceil(students.length / itemsPerPage);
-
-    if (page < 1 || page > totalPages) {
-        return; 
-    }
-
     currentPage = page;
-    renderListWithPagination(students);
+    renderListWithPagination(getStudentsFromLocalStorage());
 }
 
+
+document.getElementById('student-form').addEventListener('submit', addStudent);
 renderListWithPagination(getStudentsFromLocalStorage());
