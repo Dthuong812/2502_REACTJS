@@ -1,51 +1,53 @@
-let currentPage = 1;
+document.getElementById('student-form').addEventListener('submit', addStudent);
+document.getElementById('search-input').addEventListener('input', searchStudent);
 const itemsPerPage = 5;
+let currentPage = 1;
+let currentSearch = '';
 
-function average(student) {
-    return ((student.mathScore + student.englishScore + student.literatureScore) / 3).toFixed(2);
-}
+const average = ({ mathScore, englishScore, literatureScore }) =>
+    ((mathScore + englishScore + literatureScore) / 3).toFixed(2);
 
-function getStudentsFromLocalStorage() {
-    return JSON.parse(localStorage.getItem('students')) || [];
-}
+const getAllStudents = () =>
+    JSON.parse(localStorage.getItem('students')) || [];
 
-function saveStudentsToLocalStorage(students) {
+
+const saveAllStudents = (students) =>
     localStorage.setItem('students', JSON.stringify(students));
+
+
+function getPaginatedStudents(page = 1, perPage = 5, search = '') {
+    const all = getAllStudents();
+    const filtered = all.filter(s =>
+        s.name.toLowerCase().includes(search.toLowerCase())
+    );
+    const start = (page - 1) * perPage;
+    return {
+        students: filtered.slice(start, start + perPage),
+        totalItems: filtered.length,
+    };
 }
+
 
 function clearErrorOnFocus() {
-    document.getElementById('name').addEventListener('focus', () => {
-        document.getElementById('name-error').innerText = '';
+    ['name', 'math', 'english', 'literature'].forEach(id => {
+        document.getElementById(id).addEventListener('focus', () => {
+            document.getElementById(`${id}-error`).innerText = '';
+        });
     });
-
     document.querySelectorAll('input[name="gender"]').forEach(input => {
         input.addEventListener('focus', () => {
             document.getElementById('gender-error').innerText = '';
         });
     });
-
-    document.getElementById('math').addEventListener('focus', () => {
-        document.getElementById('math-error').innerText = '';
-    });
-
-    document.getElementById('english').addEventListener('focus', () => {
-        document.getElementById('english-error').innerText = '';
-    });
-
-    document.getElementById('literature').addEventListener('focus', () => {
-        document.getElementById('literature-error').innerText = '';
-    });
 }
 clearErrorOnFocus();
 
-function addStudent(event) {
-    event.preventDefault();
 
-    document.getElementById('name-error').innerText = '';
-    document.getElementById('gender-error').innerText = '';
-    document.getElementById('math-error').innerText = '';
-    document.getElementById('english-error').innerText = '';
-    document.getElementById('literature-error').innerText = '';
+function addStudent(e) {
+    e.preventDefault();
+    ['name', 'gender', 'math', 'english', 'literature'].forEach(id => {
+        document.getElementById(`${id}-error`).innerText = '';
+    });
 
     const name = document.getElementById('name').value.trim();
     const gender = document.querySelector('input[name="gender"]:checked')?.value;
@@ -63,157 +65,143 @@ function addStudent(event) {
         document.getElementById('gender-error').innerText = 'Vui lòng chọn giới tính!';
         isValid = false;
     }
-    if (isNaN(mathScore) || mathScore < 0 || mathScore > 10) {
-        document.getElementById('math-error').innerText = 'Điểm Toán không hợp lệ! Vui lòng nhập số từ 0 đến 10.';
-        isValid = false;
-    }
-    if (isNaN(englishScore) || englishScore < 0 || englishScore > 10) {
-        document.getElementById('english-error').innerText = 'Điểm Tiếng Anh không hợp lệ! Vui lòng nhập số từ 0 đến 10.';
-        isValid = false;
-    }
-    if (isNaN(literatureScore) || literatureScore < 0 || literatureScore > 10) {
-        document.getElementById('literature-error').innerText = 'Điểm Văn không hợp lệ! Vui lòng nhập số từ 0 đến 10.';
-        isValid = false;
-    }
+    [['math', mathScore], ['english', englishScore], ['literature', literatureScore]].forEach(
+        ([id, score]) => {
+            if (isNaN(score) || score < 0 || score > 10) {
+                document.getElementById(`${id}-error`).innerText = 'Điểm không hợp lệ!';
+                isValid = false;
+            }
+        }
+    );
 
     if (!isValid) return;
 
-    let students = getStudentsFromLocalStorage();
-    const editIndex = document.getElementById('student-form').dataset.editIndex;
+    const students = getAllStudents();
+    const editId = document.getElementById('student-form').dataset.editId;
 
-    if (editIndex !== undefined) {
-        students[editIndex] = {
-            id: parseInt(editIndex) + 1,
-            name,
-            gender,
-            mathScore,
-            englishScore,
-            literatureScore,
-            averageScore: average({ mathScore, englishScore, literatureScore })
-        };
+    if (editId !== undefined) {
+        const idx = students.findIndex(s => s.id === parseInt(editId));
+        if (idx !== -1) {
+            students[idx] = {
+                id: parseInt(editId),
+                name,
+                gender,
+                mathScore,
+                englishScore,
+                literatureScore,
+                averageScore: average({ mathScore, englishScore, literatureScore }),
+            };
+        }
+        delete document.getElementById('student-form').dataset.editId;
         document.getElementById('add-student').textContent = 'Create Student';
-        delete document.getElementById('student-form').dataset.editIndex;
         alert('Cập nhật thành công!');
     } else {
-        const newStudent = {
-            id: students.length + 1,
+        students.unshift({
+            id: Date.now(),
             name,
             gender,
             mathScore,
             englishScore,
             literatureScore,
-            averageScore: average({ mathScore, englishScore, literatureScore })
-        };
-        students.unshift(newStudent);
+            averageScore: average({ mathScore, englishScore, literatureScore }),
+        });
     }
 
-    saveStudentsToLocalStorage(students);
-    renderListWithPagination(students);
+    saveAllStudents(students);
     document.getElementById('student-form').reset();
+    renderListWithPagination();
 }
 
-function deleteStudent(index) {
-    const confirmation = confirm("Bạn có chắc chắn muốn xóa sinh viên này không?");
-    if (!confirmation) return;
 
-    const students = getStudentsFromLocalStorage();
-    students.splice(index, 1);
-    saveStudentsToLocalStorage(students);
-    renderListWithPagination(students);
-}
-
-function editStudent(index) {
-    const students = getStudentsFromLocalStorage();
-    const student = students[index];
-
+function editStudentById(id) {
+    const student = getAllStudents().find(s => s.id === id);
+    if (!student) return;
     document.getElementById('name').value = student.name;
     document.querySelector(`input[name="gender"][value="${student.gender}"]`).checked = true;
     document.getElementById('math').value = student.mathScore;
     document.getElementById('english').value = student.englishScore;
     document.getElementById('literature').value = student.literatureScore;
 
-    document.getElementById('student-form').dataset.editIndex = index;
+    document.getElementById('student-form').dataset.editId = id;
     document.getElementById('add-student').textContent = 'Update Student';
-    document.getElementById('error-messages').innerHTML = '';
 }
+
+
+function deleteStudentById(id) {
+    if (!confirm('Bạn có chắc chắn muốn xóa sinh viên này không?')) return;
+    const students = getAllStudents().filter(s => s.id !== id);
+    saveAllStudents(students);
+    renderListWithPagination();
+}
+
 
 function searchStudent() {
-    const keyword = document.getElementById('search-input').value.trim().toLowerCase();
-    const students = getStudentsFromLocalStorage();
-    const filteredStudents = students.filter(student =>
-        student.name.toLowerCase().includes(keyword)
-    );
+    currentSearch = document.getElementById('search-input').value.trim();
     currentPage = 1;
-    renderListWithPagination(filteredStudents, keyword);
+    renderListWithPagination();
 }
 
-document.getElementById('search-input').addEventListener('input', searchStudent);
 
-
-
-function renderListWithPagination(students, keyword = '') {
+function renderListWithPagination() {
+    const { students, totalItems } = getPaginatedStudents(currentPage, itemsPerPage, currentSearch);
     const listStudent = document.getElementById('list');
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedStudents = students.slice(startIndex, endIndex);
-
-    listStudent.innerHTML = '';
-
-    paginatedStudents.forEach((student, index) => {
-        const averageScore = average(student);
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${startIndex + index + 1}</td>
+    listStudent.innerHTML = students.map((student, index) => `
+        <tr>
+            <td>${(currentPage - 1) * itemsPerPage + index + 1}</td>
             <td>${student.name}</td>
             <td>${student.gender}</td>
             <td>${student.mathScore}</td>
             <td>${student.englishScore}</td>
             <td>${student.literatureScore}</td>
-            <td>${averageScore}</td>
+            <td>${student.averageScore}</td>
             <td>
-                <button class="btn btn-sm btn-warning me-1" style="background-color: green; color: white; border: none;" onclick="editStudent(${startIndex + index})">Update</button>
-                <button class="btn btn-sm btn-danger" style="background-color: red; color: white; border: none;" onclick="deleteStudent(${startIndex + index})">Delete</button>
+                <button class="btn btn-sm btn-success" onclick="editStudentById(${student.id})">Update</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteStudentById(${student.id})">Delete</button>
             </td>
-        `;
-        listStudent.appendChild(row);
-    });
+        </tr>
+    `).join('');
 
-    renderPaginationControls(students.length);
+    renderPaginationControls(totalItems);
 }
 
 function renderPaginationControls(totalItems) {
     const pagination = document.querySelector('.pagination');
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-    pagination.innerHTML = '';
+    let paginationHTML = '';
 
-    const prevButton = document.createElement('li');
-    prevButton.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-    prevButton.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Previous</a>`;
-    pagination.appendChild(prevButton);
+
+    paginationHTML += `
+        <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+            <button class="page-link" onclick="changePage(${currentPage - 1})">Previous</button>
+        </li>
+    `;
 
     for (let i = 1; i <= totalPages; i++) {
-        const pageItem = document.createElement('li');
-        pageItem.className = `page-item ${i === currentPage ? 'active' : ''}`;
-        pageItem.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
-        pagination.appendChild(pageItem);
+        paginationHTML += `
+            <li class="page-item ${i === currentPage ? 'active' : ''}">
+                <button class="page-link" onclick="changePage(${i})">${i}</button>
+            </li>
+        `;
     }
 
-    const nextButton = document.createElement('li');
-    nextButton.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
-    nextButton.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Next</a>`;
-    pagination.appendChild(nextButton);
-}
+    paginationHTML += `
+        <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+            <button class="page-link" onclick="changePage(${currentPage + 1})">Next</button>
+        </li>
+    `;
 
+    pagination.innerHTML = paginationHTML;
+}
 function changePage(page) {
+    const totalPages = Math.ceil(getPaginatedStudents(1, itemsPerPage, currentSearch).totalItems / itemsPerPage);
+    if (page < 1 || page > totalPages) return;
     currentPage = page;
-    const keyword = document.getElementById('search-input').value.trim().toLowerCase();
-    const students = getStudentsFromLocalStorage();
-    const filteredStudents = students.filter(student =>
-        student.name.toLowerCase().includes(keyword)
-    );
-    renderListWithPagination(filteredStudents, keyword);
+    const listElement = document.getElementById('list');
+    if (listElement) {
+        listElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    renderListWithPagination();
 }
 
-document.getElementById('student-form').addEventListener('submit', addStudent);
-renderListWithPagination(getStudentsFromLocalStorage());
+renderListWithPagination();
