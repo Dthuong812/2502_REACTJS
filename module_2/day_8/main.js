@@ -1,12 +1,13 @@
+let currentPage = 1;
+const itemsPerPage = 5;
+
 function average(student) {
     return ((student.mathScore + student.englishScore + student.literatureScore) / 3).toFixed(2);
 }
 
-
 function getStudentsFromLocalStorage() {
     return JSON.parse(localStorage.getItem('students')) || [];
 }
-
 
 function saveStudentsToLocalStorage(students) {
     localStorage.setItem('students', JSON.stringify(students));
@@ -35,8 +36,6 @@ function clearErrorOnFocus() {
         document.getElementById('literature-error').innerText = '';
     });
 }
-
-
 clearErrorOnFocus();
 
 function addStudent(event) {
@@ -48,7 +47,6 @@ function addStudent(event) {
     document.getElementById('english-error').innerText = '';
     document.getElementById('literature-error').innerText = '';
 
-  
     const name = document.getElementById('name').value.trim();
     const gender = document.querySelector('input[name="gender"]:checked')?.value;
     const mathScore = parseFloat(document.getElementById('math').value);
@@ -56,7 +54,6 @@ function addStudent(event) {
     const literatureScore = parseFloat(document.getElementById('literature').value);
 
     let isValid = true;
-
 
     if (!name) {
         document.getElementById('name-error').innerText = 'Vui lòng nhập tên!';
@@ -79,15 +76,12 @@ function addStudent(event) {
         isValid = false;
     }
 
-    if (!isValid) {
-        return;
-    }
+    if (!isValid) return;
 
     let students = getStudentsFromLocalStorage();
     const editIndex = document.getElementById('student-form').dataset.editIndex;
 
     if (editIndex !== undefined) {
-        // Cập nhật sinh viên
         students[editIndex] = {
             id: parseInt(editIndex) + 1,
             name,
@@ -95,12 +89,12 @@ function addStudent(event) {
             mathScore,
             englishScore,
             literatureScore,
-            averageScore: ((mathScore + englishScore + literatureScore) / 3).toFixed(2),
+            averageScore: average({ mathScore, englishScore, literatureScore })
         };
         document.getElementById('add-student').textContent = 'Create Student';
         delete document.getElementById('student-form').dataset.editIndex;
+        alert('Cập nhật thành công!');
     } else {
-
         const newStudent = {
             id: students.length + 1,
             name,
@@ -108,63 +102,56 @@ function addStudent(event) {
             mathScore,
             englishScore,
             literatureScore,
-            averageScore: ((mathScore + englishScore + literatureScore) / 3).toFixed(2),
+            averageScore: average({ mathScore, englishScore, literatureScore })
         };
-        students.unshift(newStudent); 
+        students.unshift(newStudent);
     }
 
     saveStudentsToLocalStorage(students);
     renderListWithPagination(students);
-
-
     document.getElementById('student-form').reset();
 }
 
-
 function deleteStudent(index) {
     const confirmation = confirm("Bạn có chắc chắn muốn xóa sinh viên này không?");
-    if (!confirmation) {
-        return; 
-    }
+    if (!confirmation) return;
 
     const students = getStudentsFromLocalStorage();
-    students.splice(index, 1); 
+    students.splice(index, 1);
     saveStudentsToLocalStorage(students);
-    renderListWithPagination(students); 
+    renderListWithPagination(students);
 }
-
 
 function editStudent(index) {
     const students = getStudentsFromLocalStorage();
     const student = students[index];
 
- 
     document.getElementById('name').value = student.name;
     document.querySelector(`input[name="gender"][value="${student.gender}"]`).checked = true;
     document.getElementById('math').value = student.mathScore;
     document.getElementById('english').value = student.englishScore;
     document.getElementById('literature').value = student.literatureScore;
 
-
     document.getElementById('student-form').dataset.editIndex = index;
     document.getElementById('add-student').textContent = 'Update Student';
     document.getElementById('error-messages').innerHTML = '';
 }
 
-
 function searchStudent() {
     const keyword = document.getElementById('search-input').value.trim().toLowerCase();
     const students = getStudentsFromLocalStorage();
-    const filteredStudents = students.filter(student => student.name.toLowerCase().includes(keyword));
-    currentPage = 1; 
-    renderListWithPagination(filteredStudents);
+    const filteredStudents = students.filter(student =>
+        student.name.toLowerCase().includes(keyword)
+    );
+    currentPage = 1;
+    renderListWithPagination(filteredStudents, keyword);
 }
 
+document.getElementById('search-input').addEventListener('input', searchStudent);
 
-let currentPage = 1;
-const itemsPerPage = 5;
 
-function renderListWithPagination(students) {
+
+function renderListWithPagination(students, keyword = '') {
     const listStudent = document.getElementById('list');
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -194,20 +181,17 @@ function renderListWithPagination(students) {
     renderPaginationControls(students.length);
 }
 
-
 function renderPaginationControls(totalItems) {
     const pagination = document.querySelector('.pagination');
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     pagination.innerHTML = '';
 
-    // Nút Previous
     const prevButton = document.createElement('li');
     prevButton.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
     prevButton.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Previous</a>`;
     pagination.appendChild(prevButton);
 
-    // Các nút số trang
     for (let i = 1; i <= totalPages; i++) {
         const pageItem = document.createElement('li');
         pageItem.className = `page-item ${i === currentPage ? 'active' : ''}`;
@@ -215,7 +199,6 @@ function renderPaginationControls(totalItems) {
         pagination.appendChild(pageItem);
     }
 
-    // Nút Next
     const nextButton = document.createElement('li');
     nextButton.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
     nextButton.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Next</a>`;
@@ -224,9 +207,13 @@ function renderPaginationControls(totalItems) {
 
 function changePage(page) {
     currentPage = page;
-    renderListWithPagination(getStudentsFromLocalStorage());
+    const keyword = document.getElementById('search-input').value.trim().toLowerCase();
+    const students = getStudentsFromLocalStorage();
+    const filteredStudents = students.filter(student =>
+        student.name.toLowerCase().includes(keyword)
+    );
+    renderListWithPagination(filteredStudents, keyword);
 }
-
 
 document.getElementById('student-form').addEventListener('submit', addStudent);
 renderListWithPagination(getStudentsFromLocalStorage());
