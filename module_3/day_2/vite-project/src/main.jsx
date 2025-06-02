@@ -7,9 +7,12 @@ import HomePage from "./page/HomePage.jsx";
 import MenuPage from "./page/MenuPage.jsx";
 import DetailPage from "./page/DetailPage.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
-
+import Login from "./page/Login.jsx";
+import { AuthProvider } from "./context/AuthContext";
 
 const router = createBrowserRouter([
+  {path: "/login",
+  element: <Login/>,},
   {
     path: "/",
     element: <App />,
@@ -23,8 +26,11 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <CartProvider>
-      <RouterProvider router={router} />
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+        <RouterProvider router={router} />
+      </CartProvider>
+    </AuthProvider>
   </StrictMode>
 );
+
