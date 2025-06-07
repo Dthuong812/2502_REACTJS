@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Checkbox, Form, Input, Typography } from "antd";
-import { LockOutlined, MailOutlined } from "@ant-design/icons";
+import { LockOutlined} from "@ant-design/icons";
 import { UserOutlined } from '@ant-design/icons'
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -32,7 +32,7 @@ export default function Login() {
             throw new Error(data.message || "Login failed");
           }
       
-          login(data);
+          login(data.accessToken);
           message.success("Login successful!");
           navigate("/");
         } catch (err) {
@@ -89,9 +89,12 @@ export default function Login() {
               Login
             </Button>
             <div className="mt-4 text-center ">
-              <Text>Don't have an account?</Text>{" "}
-              <Link className="!text-orange-500 !hover:text-orange-700">
-                Sign up now
+              <Text>Trở lại trang chủ</Text>{" "}
+              <Link
+                className="!text-orange-500 !hover:text-orange-700"
+                onClick={() => navigate("/")}
+              >
+                Home
               </Link>
             </div>
           </Form.Item>

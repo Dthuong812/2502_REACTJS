@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Menu } from "antd";
 import ButtonComponent from "./ButtonComponent";
 import { useNavigate } from "react-router-dom";
+import { useSearch } from "../context/SearchContext";
+import OpenBookingButtonComponent from "./OpenBookingButtonComponent";
+
 
 const items = [
   {
@@ -24,8 +27,15 @@ const items = [
 const MenuComponent = () => {
   const [current, setCurrent] = useState("/");
   const navigate = useNavigate();
+  const { setSearchTerm } = useSearch();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const onClick = (e) => {
     setCurrent(e.key);
+    if (e.key === "/menu") {
+      setSearchTerm("");
+    }
+
     navigate(e.key);
   };
   return (
@@ -49,9 +59,10 @@ const MenuComponent = () => {
           ),
         }))}
       />
-      <ButtonComponent className="!text-white !bg-orange-500 !font-semibold hover:!bg-orange-600 transition-colors duration-300">
+      <ButtonComponent className="!text-white !bg-orange-500 !font-semibold hover:!bg-orange-600 transition-colors duration-300" onClick={() => setIsModalOpen(true)}>
         Đặt tiệc ngay
       </ButtonComponent>
+      <OpenBookingButtonComponent isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };

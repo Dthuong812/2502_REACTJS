@@ -1,6 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
+import { Modal } from "antd";
 
 const IntroComponent = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <section className="flex flex-col items-center w-full py-16 bg-[#f3f3f3]">
       <div className="grid items-center gap-10 px-15 max-w-8xl md:grid-cols-2">
@@ -29,7 +40,10 @@ const IntroComponent = () => {
             className="object-cover w-full h-100"
           />
           <div className="absolute inset-0 bg-black/10 backdrop-blur-[1px]"></div>
-          <button className="absolute inset-0 flex items-center justify-center">
+          <button
+            className="absolute inset-0 flex items-center justify-center"
+            onClick={handleOpenModal}
+          >
             <div className="p-3 transition bg-white rounded-full shadow-lg hover:scale-110">
               <svg
                 className="w-6 h-6 text-red-500"
@@ -42,6 +56,27 @@ const IntroComponent = () => {
           </button>
         </div>
       </div>
+      <Modal
+        title
+        open={isModalOpen}
+        onCancel={handleCloseModal}
+        footer={null}
+        width={800}
+      >
+        <div className="relative" style={{ paddingTop: "56.25%" }}>
+          <iframe
+            width="914"
+            height="514"
+            src="https://www.youtube.com/embed/jumecLUY-z0?list=RDjumecLUY-z0"
+            title='Một Lời Đồn -  Album "bình thường"'
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+            className="absolute top-0 left-0 w-full h-full"
+          ></iframe>
+        </div>
+      </Modal>
     </section>
   );
 };

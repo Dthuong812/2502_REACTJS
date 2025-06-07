@@ -9,6 +9,8 @@ import DetailPage from "./page/DetailPage.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
 import Login from "./page/Login.jsx";
 import { AuthProvider } from "./context/AuthContext";
+import CustomMenuPage from "./page/CustomMenuPage.jsx";
+import { SearchProvider } from "./context/SearchContext.jsx";
 
 const router = createBrowserRouter([
   {path: "/login",
@@ -20,17 +22,20 @@ const router = createBrowserRouter([
       { path: "/", element: <HomePage /> },
       { path: "/menu", element: <MenuPage /> },
       { path: "/menu/:id", element: <DetailPage /> },
+      { path: "/menu/custom", element: <CustomMenuPage/> },
     ],
   },
 ]);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <AuthProvider>
-      <CartProvider>
+  <AuthProvider>
+    <CartProvider>
+      <SearchProvider>
         <RouterProvider router={router} />
-      </CartProvider>
-    </AuthProvider>
-  </StrictMode>
+      </SearchProvider>
+    </CartProvider>
+  </AuthProvider>
+</StrictMode>
 );
 
