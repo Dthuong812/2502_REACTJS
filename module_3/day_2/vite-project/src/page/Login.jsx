@@ -32,7 +32,14 @@ export default function Login() {
             throw new Error(data.message || "Login failed");
           }
       
-          login(data.accessToken);
+          login(data.accessToken,{
+            id: data.id,
+            username: data.username,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            image: data.image,
+          });
           message.success("Login successful!");
           navigate("/");
         } catch (err) {

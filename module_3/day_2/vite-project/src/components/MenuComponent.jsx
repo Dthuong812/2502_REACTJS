@@ -4,7 +4,10 @@ import ButtonComponent from "./ButtonComponent";
 import { useNavigate } from "react-router-dom";
 import { useSearch } from "../context/SearchContext";
 import OpenBookingButtonComponent from "./OpenBookingButtonComponent";
+import { useAuth } from "../hooks/useAuth";
 
+const MenuComponent = () => {
+  const { user} = useAuth();
 
 const items = [
   {
@@ -23,8 +26,15 @@ const items = [
     label: "Tin tức",
     key: "/news",
   },
+  ...(user
+    ? [
+        {
+          label: "Menu của tôi",
+          key: "/menu/custom",
+        },
+      ]
+    : []),
 ];
-const MenuComponent = () => {
   const [current, setCurrent] = useState("/");
   const navigate = useNavigate();
   const { setSearchTerm } = useSearch();
@@ -39,7 +49,7 @@ const MenuComponent = () => {
     navigate(e.key);
   };
   return (
-    <div className="flex items-center bg-white">
+    <div className={`flex items-center bg-white ${user ? "w-160" : "w-130"}`}>
       <Menu
         className="!bg-white !border-none !shadow-none w-100 !text-orange-500"
         onClick={onClick}

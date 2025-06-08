@@ -11,6 +11,8 @@ import Login from "./page/Login.jsx";
 import { AuthProvider } from "./context/AuthContext";
 import CustomMenuPage from "./page/CustomMenuPage.jsx";
 import { SearchProvider } from "./context/SearchContext.jsx";
+import ProfilePage from "./page/ProfilePage.jsx";
+import CartPage from "./page/CartPage.jsx";
 
 const router = createBrowserRouter([
   {path: "/login",
@@ -23,6 +25,8 @@ const router = createBrowserRouter([
       { path: "/menu", element: <MenuPage /> },
       { path: "/menu/:id", element: <DetailPage /> },
       { path: "/menu/custom", element: <CustomMenuPage/> },
+      { path: "/profile", element: <ProfilePage/> },
+      { path:"/cart" ,element:<CartPage />} ,
     ],
   },
 ]);

@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 const HeaderComponent = () => {
   const { cartCount } = useCart();
-  const { token, logout } = useAuth();
+  const { user,token, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -22,10 +22,7 @@ const HeaderComponent = () => {
       <Menu.Item key="profile" onClick={() => navigate('/profile')}>
         Trang cá nhân
       </Menu.Item>
-      <Menu.Item key="my-menu" onClick={() => navigate('/menu/custom')}>
-        Menu của tôi
-      </Menu.Item>
-      <Menu.Item key="my-orders" onClick={() => navigate('/my-orders')}>
+      <Menu.Item onClick={() => navigate('/profile', { state: { tab: 'orders' } })}>
         Đơn hàng của tôi
       </Menu.Item>
       <Menu.Item key="logout" onClick={handleLogout}>
@@ -40,11 +37,11 @@ const HeaderComponent = () => {
       <div className="flex items-center gap-4 pr-10">
         <InputComponent placeholder="Tìm kiếm món ăn" />
 
-        {token ? (
+        {token && user ? (
           <Dropdown overlay={accountMenu}>
             <div className="flex items-center gap-2 cursor-pointer">
               <UserOutlined />
-              <span>Tài khoản</span> 
+              <span>{user.username}</span> 
             </div>
           </Dropdown>
         ) : (
@@ -52,9 +49,9 @@ const HeaderComponent = () => {
             Đăng nhập
           </Button>
         )}
-
+      
         <Badge count={cartCount} offset={[5, 0]} size="small">
-          <ShoppingCartOutlined
+          <ShoppingCartOutlined onClick={() => navigate("/cart")} 
             style={{ fontSize: "18px", cursor: "pointer" }}
           />
         </Badge>
