@@ -9,9 +9,8 @@ import { useNavigate } from "react-router-dom";
 
 const HeaderComponent = () => {
   const { cartCount } = useCart();
-  const { user,token, logout } = useAuth();
+  const { user, token, logout } = useAuth();
   const navigate = useNavigate();
-
   const handleLogout = () => {
     logout();
     navigate("/login");
@@ -19,10 +18,12 @@ const HeaderComponent = () => {
 
   const accountMenu = (
     <Menu>
-      <Menu.Item key="profile" onClick={() => navigate('/profile')}>
+      <Menu.Item key="profile" onClick={() => navigate("/profile")}>
         Trang cá nhân
       </Menu.Item>
-      <Menu.Item onClick={() => navigate('/profile', { state: { tab: 'orders' } })}>
+      <Menu.Item
+        onClick={() => navigate("/profile", { state: { tab: "orders" } })}
+      >
         Đơn hàng của tôi
       </Menu.Item>
       <Menu.Item key="logout" onClick={handleLogout}>
@@ -41,20 +42,31 @@ const HeaderComponent = () => {
           <Dropdown overlay={accountMenu}>
             <div className="flex items-center gap-2 cursor-pointer">
               <UserOutlined />
-              <span>{user.username}</span> 
+              <span>{user.username}</span>
             </div>
           </Dropdown>
         ) : (
-          <Button className='!text-white !bg-orange-500 !font-semibold' onClick={() => navigate('/login')}>
+          <Button
+            className="!text-white !bg-orange-500 !font-semibold"
+            onClick={() => navigate("/login")}
+          >
             Đăng nhập
           </Button>
         )}
-      
-        <Badge count={cartCount} offset={[5, 0]} size="small">
-          <ShoppingCartOutlined onClick={() => navigate("/cart")} 
-            style={{ fontSize: "18px", cursor: "pointer" }}
+
+        {token ? (
+          <Badge count={cartCount} offset={[5, 0]} size="small">
+            <ShoppingCartOutlined
+              onClick={() => navigate("/cart")}
+              style={{ fontSize: "18px", cursor: "pointer" }}
+            />
+          </Badge>
+        ):
+        <ShoppingCartOutlined
+              onClick={() => navigate("/login")}
+              style={{ fontSize: "18px", cursor: "pointer" }}
           />
-        </Badge>
+        }
       </div>
     </div>
   );

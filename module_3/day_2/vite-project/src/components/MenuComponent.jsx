@@ -7,7 +7,7 @@ import OpenBookingButtonComponent from "./OpenBookingButtonComponent";
 import { useAuth } from "../hooks/useAuth";
 
 const MenuComponent = () => {
-  const { user} = useAuth();
+  const { token} = useAuth();
 
 const items = [
   {
@@ -26,7 +26,7 @@ const items = [
     label: "Tin tức",
     key: "/news",
   },
-  ...(user
+  ...(token
     ? [
         {
           label: "Menu của tôi",
@@ -49,7 +49,7 @@ const items = [
     navigate(e.key);
   };
   return (
-    <div className={`flex items-center bg-white ${user ? "w-160" : "w-130"}`}>
+    <div className={`flex items-center bg-white ${token ? "w-160" : "w-130"}`}>
       <Menu
         className="!bg-white !border-none !shadow-none w-100 !text-orange-500"
         onClick={onClick}
