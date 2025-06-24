@@ -7,14 +7,16 @@ import {
   ShoppingCartOutlined,
 } from "@ant-design/icons";
 import ButtonComponent from "./ButtonComponent";
-import { useCart } from "../context/CartContext";
-
+// import { useCart } from "../context/CartContext";
+import { useDispatch } from "react-redux";
+import { addCart } from "../redux/actions/cartActions";
 const ItemDetail = () => {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
-  const { addToCart } = useCart();
+  // const { addToCart } = useCart();
+  const dispatch = useDispatch();
 
   const increase = () => setQuantity((prev) => prev + 1);
   const decrease = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
@@ -45,14 +47,13 @@ const ItemDetail = () => {
   }, [id]);
 
   const handleAdd = () => {
-    const itemToAdd = {
+    dispatch(addCart({
       id: recipe.id,
       name: recipe.name,
       image: recipe.image,
       price: recipe.price,
       quantity,
-    };
-    addToCart(itemToAdd);
+    }));
   };
 
   if (loading) {

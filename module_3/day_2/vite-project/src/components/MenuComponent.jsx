@@ -2,12 +2,17 @@ import React, { useState } from "react";
 import { Menu } from "antd";
 import ButtonComponent from "./ButtonComponent";
 import { useNavigate } from "react-router-dom";
-import { useSearch } from "../context/SearchContext";
+// import { useSearch } from "../context/SearchContext";
 import OpenBookingButtonComponent from "./OpenBookingButtonComponent";
-import { useAuth } from "../hooks/useAuth";
+// import { useAuth } from "../hooks/useAuth";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { setSearchTerm } from "../redux/actions/searchActions";
 
 const MenuComponent = () => {
-  const { token} = useAuth();
+  // const { token} = useAuth();
+  const token = useSelector((state) => state.auth.token);
+  const dispatch = useDispatch();
 
 const items = [
   {
@@ -37,13 +42,13 @@ const items = [
 ];
   const [current, setCurrent] = useState("/");
   const navigate = useNavigate();
-  const { setSearchTerm } = useSearch();
+  // const { setSearchTerm } = useSearch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   const onClick = (e) => {
     setCurrent(e.key);
     if (e.key === "/menu") {
-      setSearchTerm("");
+      dispatch(setSearchTerm(""));
     }
 
     navigate(e.key);

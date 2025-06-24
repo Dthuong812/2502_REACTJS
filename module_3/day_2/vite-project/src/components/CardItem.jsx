@@ -1,24 +1,27 @@
-// src/components/CardItem.jsx
 import React, { useEffect, useState } from "react";
 import { Card, Tag, Spin, Row, Col, Rate } from "antd";
 import axios from "axios";
 import { ShoppingCartOutlined } from "@ant-design/icons";
-import { useCart } from "../context/CartContext";
+// import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
-import { useSearch } from "../context/SearchContext";
+// import { useAuth } from "../hooks/useAuth";
+// import { useSearch } from "../context/SearchContext";
 import CustomMenuComponent from "./CustomMenuComponent";
-
+import { addCart } from "../redux/actions/cartActions";
 const { Meta } = Card;
+import { useSelector, useDispatch } from "react-redux";
+
 
 const CardItem = () => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [quantity] = useState(1);
-  const { token } = useAuth();
-  const { addToCart } = useCart();
+  // const { token } = useAuth();
+  // const { addToCart } = useCart();
   const navigate = useNavigate();
-  const { searchTerm } = useSearch();
+  const dispatch = useDispatch();
+  const searchTerm = useSelector((state) => state.search.searchTerm);
+  const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
     axios
@@ -105,7 +108,7 @@ const CardItem = () => {
                       key="cart"
                       onClick={(e) => {
                         e.stopPropagation();
-                        addToCart({ ...item, quantity });
+                        dispatch(addCart({ ...item, quantity }));
                       }}
                       style={{ cursor: "pointer" }}
                     >

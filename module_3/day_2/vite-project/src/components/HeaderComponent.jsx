@@ -3,18 +3,25 @@ import MenuComponent from "./MenuComponent";
 import { Badge, Button, Dropdown, Menu } from "antd";
 import InputComponent from "./InputComponent";
 import { UserOutlined, ShoppingCartOutlined } from "@ant-design/icons";
-import { useCart } from "../context/CartContext";
-import { useAuth } from "../hooks/useAuth";
+// import { useCart } from "../context/CartContext";
+// import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../redux/actions/authActions";
+
 
 const HeaderComponent = () => {
-  const { cartCount } = useCart();
-  const { user, token, logout } = useAuth();
+  // const { cartCount } = useCart();
+  // const { user, token, logout } = useAuth();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
+  const token = useSelector((state) => state.auth.token);
   const navigate = useNavigate();
   const handleLogout = () => {
-    logout();
+    dispatch(logout());
     navigate("/login");
   };
+  const cartCount = useSelector((state) => state.cart.count);
 
   const accountMenu = (
     <Menu>

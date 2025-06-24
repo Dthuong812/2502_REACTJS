@@ -6,13 +6,12 @@ import App from "./App.jsx";
 import HomePage from "./page/HomePage.jsx";
 import MenuPage from "./page/MenuPage.jsx";
 import DetailPage from "./page/DetailPage.jsx";
-import { CartProvider } from "./context/CartContext.jsx";
 import Login from "./page/Login.jsx";
-import { AuthProvider } from "./context/AuthContext";
 import CustomMenuPage from "./page/CustomMenuPage.jsx";
-import { SearchProvider } from "./context/SearchContext.jsx";
 import ProfilePage from "./page/ProfilePage.jsx";
 import CartPage from "./page/CartPage.jsx";
+import store from "./redux/store.js";
+import { Provider } from "react-redux";
 
 const router = createBrowserRouter([
   {path: "/login",
@@ -33,13 +32,9 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-  <AuthProvider>
-    <CartProvider>
-      <SearchProvider>
-        <RouterProvider router={router} />
-      </SearchProvider>
-    </CartProvider>
-  </AuthProvider>
-</StrictMode>
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
+  </StrictMode>
 );
 

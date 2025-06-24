@@ -1,52 +1,51 @@
 import React from "react";
-import { Button, Checkbox, Form, Input, Typography } from "antd";
-import { LockOutlined} from "@ant-design/icons";
-import { UserOutlined } from '@ant-design/icons'
-import { message } from "antd";
+import { Button, Checkbox, Form, Input, Typography, message } from "antd";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useDispatch } from "react-redux";
+import { login } from "../redux/actions/authActions";
 
 const { Text, Link } = Typography;
 
 export default function Login() {
-    const navigate = useNavigate();
-    const { login } = useAuth();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-    const onFinish = async (values) => {
-        try {
-          console.log("Form values:", values); 
-      
-          const res = await fetch("https://dummyjson.com/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              username: values.username,
-              password: values.password,
-            }),
-          });
-      
-          const data = await res.json();
-          console.log("Response data:", data); 
-      
-          if (!res.ok) {
-            throw new Error(data.message || "Login failed");
-          }
-      
-          login(data.accessToken,{
-            id: data.id,
-            username: data.username,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            email: data.email,
-            image: data.image,
-          });
-          message.success("Login successful!");
-          navigate("/");
-        } catch (err) {
-          console.error("Error:", err);
-          message.error("Invalid username or password!");
-        }
-      };
+  const onFinish = async (values) => {
+    try {
+      const res = await fetch("https://dummyjson.com/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: values.username,
+          password: values.password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+
+      dispatch(
+        login(data.token || data.accessToken, {
+          id: data.id,
+          username: data.username,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          image: data.image,
+        })
+      );
+
+      message.success("Login successful!");
+      navigate("/");
+    } catch (err) {
+      console.error("Error:", err);
+      message.error("Invalid username or password!");
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -64,12 +63,7 @@ export default function Login() {
           <Form.Item
             className="border-b-2 border-gray-300"
             name="username"
-            rules={[
-              {
-                required: true,
-                message: "Please input your UserName!",
-              },
-            ]}
+            rules={[{ required: true, message: "Please input your UserName!" }]}
           >
             <Input prefix={<UserOutlined />} placeholder="UserName" />
           </Form.Item>
@@ -84,18 +78,18 @@ export default function Login() {
             <Form.Item name="remember" valuePropName="checked" noStyle>
               <Checkbox>Remember me</Checkbox>
             </Form.Item>
-            <a
-              href=""
-              className="text-sm !text-orange-500 !hover:text-orange-700"
-            >
+            <a className="text-sm !text-orange-500 !hover:text-orange-700">
               Forgot password?
             </a>
           </Form.Item>
           <Form.Item>
-            <Button className="!font-semibold !text-white !bg-orange-500 !rounded !w-full " htmlType="submit">
+            <Button
+              className="!font-semibold !text-white !bg-orange-500 !rounded !w-full"
+              htmlType="submit"
+            >
               Login
             </Button>
-            <div className="mt-4 text-center ">
+            <div className="mt-4 text-center">
               <Text>Trở lại trang chủ</Text>{" "}
               <Link
                 className="!text-orange-500 !hover:text-orange-700"
