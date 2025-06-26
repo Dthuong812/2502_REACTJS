@@ -3,42 +3,17 @@ import { Button, Checkbox, Form, Input, Typography, message } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { login } from "../redux/actions/authActions";
+import { login } from "../redux/middleware/authMiddleware";
+
 
 const { Text, Link } = Typography;
 
 export default function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const onFinish = async (values) => {
     try {
-      const res = await fetch("https://dummyjson.com/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: values.username,
-          password: values.password,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Login failed");
-      }
-
-      dispatch(
-        login(data.token || data.accessToken, {
-          id: data.id,
-          username: data.username,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.email,
-          image: data.image,
-        })
-      );
-
+      await dispatch(login(values.username, values.password));
       message.success("Login successful!");
       navigate("/");
     } catch (err) {
@@ -46,7 +21,6 @@ export default function Login() {
       message.error("Invalid username or password!");
     }
   };
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-6 bg-white shadow-lg rounded-xl">
