@@ -1,4 +1,5 @@
-import { createStore } from "redux";
+import { createStore, applyMiddleware, compose } from "redux";
+import {thunk} from "redux-thunk"; 
 import rootReducer from "./reducers/rootReducer";
 
 // Hàm lấy state từ localStorage
@@ -21,12 +22,13 @@ const saveState = (state) => {
     console.error("Could not save cart state to localStorage", e);
   }
 };
-
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; 
 // Tạo store với state ban đầu từ localStorage
 const store = createStore(
   rootReducer,
-  { cart: loadState() }, // load cart nếu có
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  { cart: loadState() }, 
+  composeEnhancers(applyMiddleware(thunk))// load cart nếu có
+  
 );
 
 // Theo dõi mọi thay đổi và lưu lại vào localStorage

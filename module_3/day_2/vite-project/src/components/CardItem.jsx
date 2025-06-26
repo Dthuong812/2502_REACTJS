@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, Tag, Spin, Row, Col, Rate } from "antd";
-import axios from "axios";
+// import axios from "axios";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 // import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
@@ -10,11 +10,12 @@ import CustomMenuComponent from "./CustomMenuComponent";
 import { addCart } from "../redux/actions/cartActions";
 const { Meta } = Card;
 import { useSelector, useDispatch } from "react-redux";
+import { fetchRecipes } from "../redux/middleware/recipesMiddleware";
 
 
 const CardItem = () => {
-  const [recipes, setRecipes] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [recipes, setRecipes] = useState([]);
+  // const [loading, setLoading] = useState(true);
   const [quantity] = useState(1);
   // const { token } = useAuth();
   // const { addToCart } = useCart();
@@ -22,34 +23,38 @@ const CardItem = () => {
   const dispatch = useDispatch();
   const searchTerm = useSelector((state) => state.search.searchTerm);
   const token = useSelector((state) => state.auth.token);
+  const { recipes, loading } = useSelector((state) => state.recipes);
+  // useEffect(() => {
+  //   axios
+  //     .get("https://dummyjson.com/recipes")
+  //     .then((res) => {
+  //       const cachedPrices =
+  //         JSON.parse(localStorage.getItem("recipePrices")) || {};
+  //       const updatedPrices = { ...cachedPrices };
+
+  //       const recipesWithPrice = res.data.recipes.map((item) => {
+  //         if (!updatedPrices[item.id]) {
+  //           updatedPrices[item.id] = Math.floor(Math.random() * 100) + 50;
+  //         }
+  //         return {
+  //           ...item,
+  //           price: updatedPrices[item.id],
+  //         };
+  //       });
+
+  //       localStorage.setItem("recipePrices", JSON.stringify(updatedPrices));
+  //       setRecipes(recipesWithPrice);
+  //       setLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       console.error("Failed to fetch recipes:", err);
+  //       setLoading(false);
+  //     });
+  // }, []);
 
   useEffect(() => {
-    axios
-      .get("https://dummyjson.com/recipes")
-      .then((res) => {
-        const cachedPrices =
-          JSON.parse(localStorage.getItem("recipePrices")) || {};
-        const updatedPrices = { ...cachedPrices };
-
-        const recipesWithPrice = res.data.recipes.map((item) => {
-          if (!updatedPrices[item.id]) {
-            updatedPrices[item.id] = Math.floor(Math.random() * 100) + 50;
-          }
-          return {
-            ...item,
-            price: updatedPrices[item.id],
-          };
-        });
-
-        localStorage.setItem("recipePrices", JSON.stringify(updatedPrices));
-        setRecipes(recipesWithPrice);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch recipes:", err);
-        setLoading(false);
-      });
-  }, []);
+    dispatch(fetchRecipes()); 
+  }, [dispatch]);
 
   if (loading) {
     return (

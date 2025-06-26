@@ -8,12 +8,14 @@ import {
 } from "@ant-design/icons";
 import ButtonComponent from "./ButtonComponent";
 // import { useCart } from "../context/CartContext";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addCart } from "../redux/actions/cartActions";
+import { fetchItemDetail } from "../redux/middleware/itemMiddleware";
 const ItemDetail = () => {
   const { id } = useParams();
-  const [recipe, setRecipe] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // const [recipe, setRecipe] = useState(null);
+  // const [loading, setLoading] = useState(true);
+  const { item: recipe, loading } = useSelector((state) => state.item);
   const [quantity, setQuantity] = useState(1);
   // const { addToCart } = useCart();
   const dispatch = useDispatch();
@@ -22,29 +24,8 @@ const ItemDetail = () => {
   const decrease = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
   useEffect(() => {
-    fetch(`https://dummyjson.com/recipes/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        const cachedPrices =
-          JSON.parse(localStorage.getItem("recipePrices")) || {};
-        const price =
-          cachedPrices[data.id] || Math.floor(Math.random() * 100) + 50;
-        data.price = price;
-
-        // Lưu lại nếu chưa có
-        if (!cachedPrices[data.id]) {
-          cachedPrices[data.id] = price;
-          localStorage.setItem("recipePrices", JSON.stringify(cachedPrices));
-        }
-
-        setRecipe(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching recipe:", error);
-        setLoading(false);
-      });
-  }, [id]);
+    dispatch(fetchItemDetail(id)); 
+  }, [dispatch, id]);
 
   const handleAdd = () => {
     dispatch(addCart({
