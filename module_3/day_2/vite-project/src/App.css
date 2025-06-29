@@ -1,0 +1,70 @@
+.ant-menu-horizontal > .ant-menu-item-selected::after {
+    border-bottom: 2px solid #ff7a00 !important; 
+}
+
+.ant-menu-horizontal > .ant-menu-item:hover::after {
+    border-bottom: 2px solid #ff7a00 !important; 
+}
+
+
+.ant-menu-horizontal > .ant-menu-item:hover {
+    color: #ff7a00 !important; 
+}
+.ant-input{
+    border:none !important;
+    border-radius: none!important;
+}
+.ant-input-outlined{
+    border: none !important;
+    border-radius: none !important;
+}
+.ant-input:focus{
+    box-shadow: none !important;
+    border: none !important;
+}
+.ant-input-search-button{
+    border: none !important;
+    border-radius: none !important;
+}
+.ant-input-wrapper{
+    border-bottom : 2px solid #d9d9d9 !important;
+}
+.ant-picker-input {
+    width: 200px !important;
+}
+.ant-picker-input > input{
+    font-size: 30px !important;
+    color: aliceblue !important;
+    width: 100px !important;
+}
+.ant-input-number-input-wrap >.ant-input-number-input{
+    color: aliceblue !important;
+    font-size: 30px !important;
+}
+.anticon-down{
+    color: white;
+    font-size: 26px !important;
+
+}
+.date {
+    border: none !important;
+    border-radius: none !important;
+    width: 100% !important;
+}
+.date >.ant-picker-input{
+    border: none !important;
+    border-radius: none !important;
+    width: 100% !important;
+    padding: 0 !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+.date >.ant-picker-input > input {
+    color: rgb(8, 8, 8) !important;
+    font-size: 14px !important;
+    width: 100px !important;
+    
+}
+.ant-menu-overflow {
+    width: 100% !important;
+}
