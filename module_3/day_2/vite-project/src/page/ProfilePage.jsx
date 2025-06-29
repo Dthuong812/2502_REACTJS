@@ -1,30 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { UserOutlined, LogoutOutlined, SettingOutlined, ShoppingCartOutlined, HeartOutlined } from '@ant-design/icons';
-import PersonalInfo from '../components/PersonalInfo';
+import React, { useEffect, useState } from 'react';
+import {
+  UserOutlined,
+  LogoutOutlined,
+  SettingOutlined,
+  ShoppingCartOutlined,
+  HeartOutlined,
+} from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../redux/slice/authSlice'; 
+import PersonalInfo from '../components/PersonalInfo';
 
 const ProfilePage = () => {
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState("info");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const user = useSelector((state) => state.auth.user);
+  const [activeTab, setActiveTab] = useState('info');
 
   useEffect(() => {
     if (location.state?.tab) {
       setActiveTab(location.state.tab);
     }
   }, [location.state]);
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
   const handleLogout = () => {
+    dispatch(logout());
     localStorage.removeItem('user');
     localStorage.removeItem('token');
-    setUser(null);
     navigate('/login');
   };
 
@@ -47,7 +51,7 @@ const ProfilePage = () => {
     <div className="flex min-h-screen p-10 bg-gray-200 pt-25">
       <div className="w-1/4 p-6 bg-white shadow-md rounded-xl">
         <div className="flex flex-col items-center mb-6">
-          {user && user.image ? (
+          {user?.image ? (
             <img
               src={user.image}
               alt={`${user.firstName} ${user.lastName}`}
@@ -64,17 +68,20 @@ const ProfilePage = () => {
           <li
             onClick={() => setActiveTab('info')}
             className={`cursor-pointer flex items-center gap-2 px-3 py-2 rounded-md ${
-              activeTab === 'info' ? 'bg-orange-100 text-orange-600 font-semibold' : 'hover:bg-gray-100'
+              activeTab === 'info'
+                ? 'bg-orange-100 text-orange-600 font-semibold'
+                : 'hover:bg-gray-100'
             }`}
           >
             <UserOutlined />
             Thông tin cá nhân
           </li>
-         
           <li
             onClick={() => setActiveTab('orders')}
             className={`cursor-pointer flex items-center gap-2 px-3 py-2 rounded-md ${
-              activeTab === 'orders' ? 'bg-orange-100 text-orange-600 font-semibold' : 'hover:bg-gray-100'
+              activeTab === 'orders'
+                ? 'bg-orange-100 text-orange-600 font-semibold'
+                : 'hover:bg-gray-100'
             }`}
           >
             <ShoppingCartOutlined />
@@ -83,7 +90,9 @@ const ProfilePage = () => {
           <li
             onClick={() => setActiveTab('saved')}
             className={`cursor-pointer flex items-center gap-2 px-3 py-2 rounded-md ${
-              activeTab === 'saved' ? 'bg-orange-100 text-orange-600 font-semibold' : 'hover:bg-gray-100'
+              activeTab === 'saved'
+                ? 'bg-orange-100 text-orange-600 font-semibold'
+                : 'hover:bg-gray-100'
             }`}
           >
             <HeartOutlined />
@@ -92,11 +101,13 @@ const ProfilePage = () => {
           <li
             onClick={() => setActiveTab('setting')}
             className={`cursor-pointer flex items-center gap-2 px-3 py-2 rounded-md ${
-              activeTab === 'setting' ? 'bg-orange-100 text-orange-600 font-semibold' : 'hover:bg-gray-100'
+              activeTab === 'setting'
+                ? 'bg-orange-100 text-orange-600 font-semibold'
+                : 'hover:bg-gray-100'
             }`}
           >
             <SettingOutlined />
-            Cài đặt 
+            Cài đặt
           </li>
           <li
             onClick={handleLogout}
@@ -108,7 +119,9 @@ const ProfilePage = () => {
         </ul>
       </div>
 
-      <div className="flex-1 p-8 ml-6 bg-white shadow-md rounded-xl">{renderContent()}</div>
+      <div className="flex-1 p-8 ml-6 bg-white shadow-md rounded-xl">
+        {renderContent()}
+      </div>
     </div>
   );
 };

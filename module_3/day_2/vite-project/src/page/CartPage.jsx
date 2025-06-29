@@ -1,9 +1,15 @@
 import React from "react";
-import { useCart } from "../context/CartContext";
 import { Table, Button } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  removeFromCart,
+  increaseQuantity,
+  decreaseQuantity,
+} from "../redux/slice/cartSlice";
 
 const CartPage = () => {
-  const { cart, removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => state.cart.items); 
 
   const columns = [
     {
@@ -35,16 +41,21 @@ const CartPage = () => {
             size="small"
             onClick={() => {
               if (quantity === 1) {
-                removeFromCart(item.id);
+                dispatch(removeFromCart(item.id));
               } else {
-                decreaseQuantity(item.id);
+                dispatch(decreaseQuantity(item.id));
               }
             }}
           >
             -
           </Button>
           <span>{quantity}</span>
-          <Button size="small" onClick={() => increaseQuantity(item.id)}>+</Button>
+          <Button
+            size="small"
+            onClick={() => dispatch(increaseQuantity(item.id))}
+          >
+            +
+          </Button>
         </div>
       ),
     },
@@ -57,7 +68,7 @@ const CartPage = () => {
       title: "Hành động",
       key: "action",
       render: (_, item) => (
-        <Button danger onClick={() => removeFromCart(item.id)}>
+        <Button danger onClick={() => dispatch(removeFromCart(item.id))}>
           Xóa
         </Button>
       ),
@@ -75,7 +86,9 @@ const CartPage = () => {
         rowKey="id"
         pagination={false}
       />
-      <h2 className="mt-4 text-lg font-bold text-right">Tổng: {total}.000 VNĐ</h2>
+      <h2 className="mt-4 text-lg font-bold text-right">
+        Tổng: {total}.000 VNĐ
+      </h2>
     </div>
   );
 };

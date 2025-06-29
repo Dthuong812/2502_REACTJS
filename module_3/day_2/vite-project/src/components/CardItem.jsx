@@ -1,52 +1,30 @@
-// src/components/CardItem.jsx
 import React, { useEffect, useState } from "react";
 import { Card, Tag, Spin, Row, Col, Rate } from "antd";
-import axios from "axios";
 import { ShoppingCartOutlined } from "@ant-design/icons";
-import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
-import { useSearch } from "../context/SearchContext";
 import CustomMenuComponent from "./CustomMenuComponent";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../redux/slice/cartSlice";
+import { fetchRecipes } from "../redux/slice/recipeSlice";
 
 const { Meta } = Card;
 
 const CardItem = () => {
-  const [recipes, setRecipes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [quantity] = useState(1);
-  const { token } = useAuth();
-  const { addToCart } = useCart();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { searchTerm } = useSearch();
+  const token = useSelector((state) => state.auth.token);
+  const searchTerm = useSelector((state) => state.search.searchTerm);
+  const [quantity] = useState(1);
+
+  const { recipes, loading } = useSelector((state) => state.recipe);
 
   useEffect(() => {
-    axios
-      .get("https://dummyjson.com/recipes")
-      .then((res) => {
-        const cachedPrices =
-          JSON.parse(localStorage.getItem("recipePrices")) || {};
-        const updatedPrices = { ...cachedPrices };
+    dispatch(fetchRecipes());
+  }, [dispatch]);
 
-        const recipesWithPrice = res.data.recipes.map((item) => {
-          if (!updatedPrices[item.id]) {
-            updatedPrices[item.id] = Math.floor(Math.random() * 100) + 50;
-          }
-          return {
-            ...item,
-            price: updatedPrices[item.id],
-          };
-        });
-
-        localStorage.setItem("recipePrices", JSON.stringify(updatedPrices));
-        setRecipes(recipesWithPrice);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch recipes:", err);
-        setLoading(false);
-      });
-  }, []);
+  const filteredRecipes = recipes.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (loading) {
     return (
@@ -55,10 +33,6 @@ const CardItem = () => {
       </div>
     );
   }
-
-  const filteredRecipes = recipes.filter((item) =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="flex-col items-center justify-center w-full px-8 max-w-8xl mb-25 pt-25 lg:flex-row">
@@ -99,13 +73,17 @@ const CardItem = () => {
                       key="price"
                       className="text-lg font-bold text-orange-500"
                     >
-                      Giá: {item.price.toLocaleString()}.000 VNĐ
+                      Giá:{" "}
+                      {typeof item.price === "number"
+                        ? item.price.toLocaleString()
+                        : "0"}
+                      .000 VNĐ
                     </span>,
                     <span
                       key="cart"
                       onClick={(e) => {
                         e.stopPropagation();
-                        addToCart({ ...item, quantity });
+                        dispatch(addToCart({ ...item, quantity }));
                       }}
                       style={{ cursor: "pointer" }}
                     >

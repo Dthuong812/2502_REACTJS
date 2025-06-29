@@ -2,48 +2,47 @@ import React, { useState } from "react";
 import { Menu } from "antd";
 import ButtonComponent from "./ButtonComponent";
 import { useNavigate } from "react-router-dom";
-import { useSearch } from "../context/SearchContext";
 import OpenBookingButtonComponent from "./OpenBookingButtonComponent";
-import { useAuth } from "../hooks/useAuth";
-
+import { useDispatch, useSelector } from "react-redux";
+import { setSearchTerm } from "../redux/slice/searchSlice";
 const MenuComponent = () => {
-  const { token} = useAuth();
+  const token = useSelector((state) => state.auth.token);
 
-const items = [
-  {
-    label: "Trang chủ",
-    key: "/",
-  },
-  {
-    label: "Thực đơn",
-    key: "/menu",
-  },
-  {
-    label: "Về chúng tôi",
-    key: "/about",
-  },
-  {
-    label: "Tin tức",
-    key: "/news",
-  },
-  ...(token
-    ? [
-        {
-          label: "Menu của tôi",
-          key: "/menu/custom",
-        },
-      ]
-    : []),
-];
+  const items = [
+    {
+      label: "Trang chủ",
+      key: "/",
+    },
+    {
+      label: "Thực đơn",
+      key: "/menu",
+    },
+    {
+      label: "Về chúng tôi",
+      key: "/about",
+    },
+    {
+      label: "Tin tức",
+      key: "/news",
+    },
+    ...(token
+      ? [
+          {
+            label: "Menu của tôi",
+            key: "/menu/custom",
+          },
+        ]
+      : []),
+  ];
   const [current, setCurrent] = useState("/");
   const navigate = useNavigate();
-  const { setSearchTerm } = useSearch();
+  const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+
   const onClick = (e) => {
     setCurrent(e.key);
     if (e.key === "/menu") {
-      setSearchTerm("");
+      dispatch(setSearchTerm(""));
     }
 
     navigate(e.key);
@@ -61,7 +60,9 @@ const items = [
           label: (
             <span
               className={`transition-colors duration-300 ${
-                current === item.key ? "text-orange-600 font-semibold" : "hover:text-orange-600"
+                current === item.key
+                  ? "text-orange-600 font-semibold"
+                  : "hover:text-orange-600"
               }`}
             >
               {item.label}
@@ -69,10 +70,16 @@ const items = [
           ),
         }))}
       />
-      <ButtonComponent className="!text-white !bg-orange-500 !font-semibold hover:!bg-orange-600 transition-colors duration-300" onClick={() => setIsModalOpen(true)}>
+      <ButtonComponent
+        className="!text-white !bg-orange-500 !font-semibold hover:!bg-orange-600 transition-colors duration-300"
+        onClick={() => setIsModalOpen(true)}
+      >
         Đặt tiệc ngay
       </ButtonComponent>
-      <OpenBookingButtonComponent isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <OpenBookingButtonComponent
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };

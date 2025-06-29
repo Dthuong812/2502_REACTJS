@@ -3,16 +3,19 @@ import MenuComponent from "./MenuComponent";
 import { Badge, Button, Dropdown, Menu } from "antd";
 import InputComponent from "./InputComponent";
 import { UserOutlined, ShoppingCartOutlined } from "@ant-design/icons";
-import { useCart } from "../context/CartContext";
-import { useAuth } from "../hooks/useAuth";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const HeaderComponent = () => {
-  const { cartCount } = useCart();
-  const { user, token, logout } = useAuth();
+  const cartItems = useSelector((state) => state.cart.items);
+  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const { user, token, logout } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const handleLogout = () => {
-    logout();
+    dispatch(logout());
+    localStorage.removeItem("authToken"); 
     navigate("/login");
   };
 
@@ -42,7 +45,7 @@ const HeaderComponent = () => {
           <Dropdown overlay={accountMenu}>
             <div className="flex items-center gap-2 cursor-pointer">
               <UserOutlined />
-              <span>{user.username}</span>
+              <span>{user?.username || "Người dùng"}</span> 
             </div>
           </Dropdown>
         ) : (
@@ -61,12 +64,12 @@ const HeaderComponent = () => {
               style={{ fontSize: "18px", cursor: "pointer" }}
             />
           </Badge>
-        ):
-        <ShoppingCartOutlined
-              onClick={() => navigate("/login")}
-              style={{ fontSize: "18px", cursor: "pointer" }}
+        ) : (
+          <ShoppingCartOutlined
+            onClick={() => navigate("/login")}
+            style={{ fontSize: "18px", cursor: "pointer" }}
           />
-        }
+        )}
       </div>
     </div>
   );
